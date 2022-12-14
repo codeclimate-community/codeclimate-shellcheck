@@ -27,14 +27,14 @@ analyze env path = do
     interface = SystemInterface
         { siReadFile = defaultInterface
         , siFindSource = error "TODO"
-        , siGetConfig = error "TODO"
+        , siGetConfig = const $ return Nothing
         }
 
 --------------------------------------------------------------------------------
 
 -- | Builds default IO interface with error handling.
-defaultInterface :: FilePath -> IO (Either ErrorMessage String)
-defaultInterface path = catch (Right <$> readFile path) handler
+defaultInterface :: Maybe Bool -> String -> IO (Either ErrorMessage String)
+defaultInterface _ path = catch (Right <$> readFile path) handler
   where
     handler :: IOException -> IO (Either ErrorMessage String)
     handler ex = return . Left $! show ex
